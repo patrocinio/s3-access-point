@@ -1,0 +1,36 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'S3 Access Point'
+
+Resources:
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub '${AWS::StackName}-bucket'
+
+  BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref S3Bucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: DenyAccessFromExternalAccessPoints
+            Effect: Deny
+            Principal: '*'
+            Action:
+              - s3:GetObject*
+              - s3:ListBucket
+            Resource: 
+              - !Sub '${S3Bucket}/*'
+              - !GetAtt S3Bucket.Arn
+            Condition:
+              StringNotEquals:
+                s3:DataAccessPointAccount: !Ref AWS::AccountId
+
+
+
+Outputs:
+  BucketName:
+    Value: !Ref S3Bucket
+  BucketArn:
+    Value: !GetAtt S3Bucket.Arn
