@@ -21,8 +21,8 @@ Resources:
               - s3:GetObject*
               - s3:ListBucket
             Resource: 
-              - !Sub '${S3Bucket}/*'
-              - !GetAtt S3Bucket.Arn
+              - !Sub 'arn:aws:s3:::${S3Bucket}/*'
+              - !Sub 'arn:aws:s3:::${S3Bucket}'
             Condition:
               StringNotEquals:
                 s3:DataAccessPointAccount: !Ref AWS::AccountId
